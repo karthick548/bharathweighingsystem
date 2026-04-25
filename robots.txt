@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://bharathscales.bharathweighingsystem.workers.dev/sitemap.xml
+Sitemap: https://https://bharathweighingsystem.com/sitemap.xml
