@@ -84,6 +84,7 @@ function buildHeader(activePage) {
       <a href="cat-industrial.html" ${activePage==='industrial'?'class="active"':''}>Industrial Weigh Scale</a>
       <a href="cat-retail.html" ${activePage==='retail'?'class="active"':''}>Printing Scales</a>
       <a href="about.html" ${activePage==='about'?'class="active"':''}>About</a>
+      <a href="service.html" ${activePage==='service'?'class="active"':''}>Service</a>
       <a href="contact.html" ${activePage==='contact'?'class="active"':''}>Contact</a>
     </div>
   </nav>`;
@@ -119,6 +120,7 @@ function buildFooter() {
         <h5>Company</h5>
         <ul>
           <li><a href="about.html">About Us</a></li>
+          
           <li><a href="about.html">Quality Policy</a></li>
           <li><a href="contact.html">Careers</a></li>
           <li><a href="contact.html">Rental Services</a></li>
