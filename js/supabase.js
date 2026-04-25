@@ -52,9 +52,7 @@ const SB = {
 
   /* DB HELPERS */
   async select(table, token, filters = '') {
-    const headers = token
-      ? this.authHeaders(token)
-      : { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Authorization': Bearer ${SUPABASE_ANON_KEY} };
+    const headers = this.authHeaders(token)
     const r = await fetch(${SUPABASE_URL}/rest/v1/${table}?${filters}&order=created_at.desc, {
       headers: headers
     });
