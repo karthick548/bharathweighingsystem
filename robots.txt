@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://https://bharathweighingsystem.com/sitemap.xml
+Disallow: /admin.html
+Sitemap: https://bharathweighingsystem.com/sitemap.xml
