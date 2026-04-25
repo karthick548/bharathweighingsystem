@@ -52,8 +52,11 @@ const SB = {
 
   /* DB HELPERS */
   async select(table, token, filters = '') {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filters}&order=created_at.desc`, {
-      headers: this.authHeaders(token)
+    const headers = token
+      ? this.authHeaders(token)
+      : { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Authorization': Bearer ${SUPABASE_ANON_KEY} };
+    const r = await fetch(${SUPABASE_URL}/rest/v1/${table}?${filters}&order=created_at.desc, {
+      headers: headers
     });
     if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Select failed'); }
     return await r.json();
