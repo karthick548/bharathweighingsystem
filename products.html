@@ -65,9 +65,9 @@
   document.getElementById('footer-root').innerHTML = buildFooter();
 
   // Load products from admin storage (live) or fallback to defaults
-  const LIVE_PRODUCTS = getAdminProducts();
+  document.getElementById('all-grid').innerHTML = '<p style="text-align:center;padding:40px;color:#888">Loading products…</p>';
+getAdminProducts().then(function(LIVE_PRODUCTS) {
   const LIVE_CATS = getAdminCategories();
-
   // Build filter buttons dynamically from categories
   const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
   const filterBar = document.getElementById('filter-bar');
