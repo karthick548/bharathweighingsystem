@@ -64,34 +64,39 @@
   document.getElementById('header-root').innerHTML = buildHeader('products');
   document.getElementById('footer-root').innerHTML = buildFooter();
 
-  document.getElementById('all-grid').innerHTML = '<p style="text-align:center;padding:40px;color:#888">Loading products…</p>';
+  var allProducts = [];
 
-  getAdminProducts().then(function(LIVE_PRODUCTS) {
-    const LIVE_CATS = getAdminCategories();
+  window.filterProducts = function(cat, e) {
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    if (e && e.target) e.target.classList.add('active');
+    var items = cat ? allProducts.filter(function(p) { return p.cat === cat; }) : allProducts;
+    document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
+    document.getElementById('count-label').textContent = 'Showing ' + items.length + ' product' + (items.length !== 1 ? 's' : '');
+  };
 
-    window.filterProducts = function(cat, e) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      if (e && e.target) e.target.classList.add('active');
-      const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
-      document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
-      document.getElementById('count-label').textContent = Showing ${items.length} product${items.length!==1?'s':''};
-    };
+  getAdminProducts().then(function(prods) {
+    allProducts = prods;
+    var LIVE_CATS = getAdminCategories();
+    var usedCats = [...new Set(prods.map(function(p) { return p.cat; }))];
+    var filterBar = document.getElementById('filter-bar');
 
-    const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
-    const filterBar = document.getElementById('filter-bar');
-    usedCats.forEach(catId => {
-      const cat = LIVE_CATS.find(c => c.id === catId);
+    usedCats.forEach(function(catId) {
+      var cat = LIVE_CATS.find(function(c) { return c.id === catId; });
       if (!cat) return;
-      const btn = document.createElement('button');
+      var btn = document.createElement('button');
       btn.className = 'filter-btn';
       btn.textContent = cat.name;
-      btn.onclick = (e) => filterProducts(catId, e);
+      btn.onclick = function(e) { filterProducts(catId, e); };
       filterBar.appendChild(btn);
     });
 
     filterProducts('', null);
     document.querySelector('.filter-btn').classList.add('active');
-    document.getElementById('page-subtitle').textContent = Complete range of weighing machines — ${LIVE_PRODUCTS.length} products;
+    document.getElementById('page-subtitle').textContent = 'Complete range of weighing machines — ' + prods.length + ' products';
+  }).catch(function(err) {
+    console.error('Failed:', err);
+    allProducts = typeof PRODUCTS !== 'undefined' ? PRODUCTS : [];
+    filterProducts('', null);
   });
 </script>
 </body>
