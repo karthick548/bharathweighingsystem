@@ -9,7 +9,11 @@ const STORAGE_KEY_CATS      = 'bws_categories';
 const STORAGE_KEY_SETTINGS  = 'bws_settings';
 
 /* ── COMPATIBILITY WRAPPERS (used by index.html, products.html etc.) ── */
-function getAdminProducts() {
+async function getAdminProducts() {
+  try {
+    const rows = await dbGetProducts();
+    if (rows && rows.length > 0) return rows;
+  } catch(e) { console.warn('Supabase fetch failed, using local:', e.message); }
   try { const s = localStorage.getItem(STORAGE_KEY_PRODUCTS); if (s) return JSON.parse(s); } catch {}
   return typeof PRODUCTS !== 'undefined' ? JSON.parse(JSON.stringify(PRODUCTS)) : [];
 }
