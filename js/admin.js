@@ -10,12 +10,18 @@ const STORAGE_KEY_SETTINGS  = 'bws_settings';
 
 /* ── COMPATIBILITY WRAPPERS (used by index.html, products.html etc.) ── */
 async function getAdminProducts() {
+  // Always show local products immediately as fallback
+  const local = typeof PRODUCTS !== 'undefined' ? JSON.parse(JSON.stringify(PRODUCTS)) : [];
   try {
-    const rows = await dbGetProducts();
+    const rows = await Promise.race([
+      dbGetProducts(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000))
+    ]);
     if (rows && rows.length > 0) return rows;
-  } catch(e) { console.warn('Supabase fetch failed, using local:', e.message); }
-  try { const s = localStorage.getItem(STORAGE_KEY_PRODUCTS); if (s) return JSON.parse(s); } catch {}
-  return typeof PRODUCTS !== 'undefined' ? JSON.parse(JSON.stringify(PRODUCTS)) : [];
+  } catch(e) { 
+    console.warn('Supabase failed, using local products:', e.message); 
+  }
+  return local;
 }
 function saveAdminProducts(arr)   { localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(arr)); }
 function getAdminCategories() {
