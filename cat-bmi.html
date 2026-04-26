@@ -45,9 +45,18 @@
         </div>
       </div>`;
   }
-  const items = getAdminProducts().filter(p => p.cat === CAT_KEY);
-  document.getElementById('count-label').textContent = `${items.length} product${items.length!==1?'s':''} found`;
+  async function renderCatProducts() {
+  let prods;
+  try {
+    prods = await dbGetProducts();
+  } catch(e) {
+    prods = getAdminProducts();
+  }
+  const items = prods.filter(p => p.cat === CAT_KEY);
+  document.getElementById('count-label').textContent = ${items.length} product${items.length!==1?'s':''} found;
   document.getElementById('cat-grid').innerHTML = items.map(productCardHTML).join('');
+}
+renderCatProducts();
 </script>
 </body>
 </html>
