@@ -52,6 +52,7 @@
   const items = getAdminProducts().filter(p => p.cat === CAT_KEY);
   document.getElementById('count-label').textContent = `${items.length} product${items.length!==1?'s':''} found`;
   document.getElementById('cat-grid').innerHTML = items.map(productCardHTML).join('');
+});
 </script>
 </body>
 </html>
