@@ -140,9 +140,20 @@
   document.getElementById('footer-root').innerHTML = buildFooter();
 
   // Render featured products
-  const featuredIds = ['p1','p7','p12','p17','p28','p31','p38','p4'];
-  const LIVE_PRODS = getAdminProducts(); const featured = featuredIds.map(id => LIVE_PRODS.find(p => p.id === id)).filter(Boolean);
-  document.getElementById('featured-grid').innerHTML = featured.map(productCardHTML).join('');
+  async function renderFeatured() {
+  try {
+    const prods = await dbGetProducts();
+    const featured = featuredIds.map(id => prods.find(p => p.id === id)).filter(Boolean);
+    document.getElementById('featured-grid').innerHTML = featured.length
+      ? featured.map(productCardHTML).join('')
+      : prods.slice(0, 8).map(productCardHTML).join('');
+  } catch(e) {
+    const prods = getAdminProducts();
+    const featured = featuredIds.map(id => prods.find(p => p.id === id)).filter(Boolean);
+    document.getElementById('featured-grid').innerHTML = featured.map(productCardHTML).join('');
+  }
+}
+renderFeatured();
 </script>
 </body>
 </html>
