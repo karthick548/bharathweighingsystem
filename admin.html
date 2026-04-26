@@ -20,13 +20,19 @@
 <script src="js/admin.js"></script>
 <script src="js/components.js"></script>
 <script>
-  window.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('admin-root').innerHTML = buildAdminPanel();
+  try {
+  var panel = buildAdminPanel();
+  document.getElementById('admin-root').innerHTML = panel;
   if (checkAdminAuth()) {
     loadAndRenderProducts();
     loadAndRenderCategories();
   }
-});
+} catch(err) {
+  document.getElementById('admin-root').innerHTML =
+    '<div style="padding:40px;color:red;">' +
+    '<h2>Admin Error</h2><p>' + err.message + '</p>' +
+    '</div>';
+}
 </script>
 </body>
 </html>
