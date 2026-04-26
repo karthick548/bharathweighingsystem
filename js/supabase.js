@@ -53,7 +53,7 @@ const SB = {
   /* DB HELPERS */
   async select(table, token, filters = '') {
     const headers = this.authHeaders(token)
-    const r = await fetch(${SUPABASE_URL}/rest/v1/${table}?${filters}&order=created_at.desc, {
+    const r = await fetch('${SUPABASE_URL}/rest/v1/${table}?${filters}&order=created_at.desc', {
       headers: headers
     });
     if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Select failed'); }
