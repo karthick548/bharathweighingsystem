@@ -186,8 +186,12 @@
 
   // Render featured products
   const featuredIds = ['p1','p7','p12','p17','p28','p31','p38','p4'];
-  const LIVE_PRODS = getAdminProducts(); const featured = featuredIds.map(id => LIVE_PRODS.find(p => p.id === id)).filter(Boolean);
+document.getElementById('featured-grid').innerHTML = '<p style="text-align:center;padding:20px;color:#888">Loading products…</p>';
+getAdminProducts().then(function(LIVE_PRODS) {
+  let featured = featuredIds.map(id => LIVE_PRODS.find(p => p.id === id)).filter(Boolean);
+  if (featured.length === 0) featured = LIVE_PRODS.slice(0, 8);
   document.getElementById('featured-grid').innerHTML = featured.map(productCardHTML).join('');
+});
 </script>
 </body>
 </html>
