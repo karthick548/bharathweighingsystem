@@ -64,35 +64,35 @@
   document.getElementById('header-root').innerHTML = buildHeader('products');
   document.getElementById('footer-root').innerHTML = buildFooter();
 
-  // Load products from admin storage (live) or fallback to defaults
   document.getElementById('all-grid').innerHTML = '<p style="text-align:center;padding:40px;color:#888">Loading products…</p>';
-getAdminProducts().then(function(LIVE_PRODUCTS) {
-  const LIVE_CATS = getAdminCategories();
-  // Build filter buttons dynamically from categories
-  const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
-  const filterBar = document.getElementById('filter-bar');
-  usedCats.forEach(catId => {
-    const cat = LIVE_CATS.find(c => c.id === catId);
-    if (!cat) return;
-    const btn = document.createElement('button');
-    btn.className = 'filter-btn';
-    btn.textContent = cat.name;
-    btn.onclick = (e) => filterProducts(catId, e);
-    filterBar.appendChild(btn);
+
+  getAdminProducts().then(function(LIVE_PRODUCTS) {
+    const LIVE_CATS = getAdminCategories();
+
+    window.filterProducts = function(cat, e) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (e && e.target) e.target.classList.add('active');
+      const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
+      document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
+      document.getElementById('count-label').textContent = Showing ${items.length} product${items.length!==1?'s':''};
+    };
+
+    const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
+    const filterBar = document.getElementById('filter-bar');
+    usedCats.forEach(catId => {
+      const cat = LIVE_CATS.find(c => c.id === catId);
+      if (!cat) return;
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.textContent = cat.name;
+      btn.onclick = (e) => filterProducts(catId, e);
+      filterBar.appendChild(btn);
+    });
+
+    filterProducts('', null);
+    document.querySelector('.filter-btn').classList.add('active');
+    document.getElementById('page-subtitle').textContent = Complete range of weighing machines — ${LIVE_PRODUCTS.length} products;
   });
-
-  function filterProducts(cat, e) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    if (e && e.target) e.target.classList.add('active');
-    const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
-    document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
-    document.getElementById('count-label').textContent = `Showing ${items.length} product${items.length!==1?'s':''}`;
-  }
-
-  // Initial render
-  filterProducts('', null);
-  document.querySelector('.filter-btn').classList.add('active');
-  document.getElementById('page-subtitle').textContent = `Complete range of weighing machines — ${LIVE_PRODUCTS.length} products`;
 </script>
 </body>
 </html>
