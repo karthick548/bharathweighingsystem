@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="canonical" href="https://bharathweighingsystem.com/products.html" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+<link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+<link rel="shortcut icon" href="logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Weighing Products — Bharath Weighing System Chennai</title>
+<meta name="description" content="Browse 500+ weighing machines - Industrial scales, crane scales, jewellery scales, platform scales, counting scales. Best factory prices from Chennai manufacturer." />
+<meta name="keywords" content="weighing machine products Chennai, buy industrial scale Tamil Nadu, all weighing scales price list" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Bharath Weighing System" />
+<meta property="og:title" content="All Weighing Products — Bharath Weighing System" />
+<meta property="og:description" content="500+ weighing machines at best factory prices. Industrial, crane, jewellery, platform scales." />
+<meta property="og:type" content="website" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="header-root"></div>
+
+<div class="cat-page-header">
+  <div class="inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / All Products</div>
+    <h1>All Products</h1>
+    <p id="page-subtitle">Complete range of weighing machines, scales and measuring instruments</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<section style="background:var(--white);padding:20px 20px 0">
+  <div class="section-inner">
+    <div id="filter-bar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <span style="font-size:13px;font-weight:600;color:var(--muted)">Filter:</span>
+      <button class="filter-btn active" onclick="filterProducts('',event)">All</button>
+    </div>
+  </div>
+</section>
+
+<style>
+.filter-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+</style>
+
+<section style="background:var(--bg)">
+  <div class="section-inner">
+    <p id="count-label" style="color:var(--muted);font-size:13.5px;margin-bottom:20px">Loading products…</p>
+    <div class="products-grid" id="all-grid"></div>
+  </div>
+</section>
+
+<div id="footer-root"></div>
+
+<script src="js/products.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/components.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  document.getElementById('header-root').innerHTML = buildHeader('products');
+  document.getElementById('footer-root').innerHTML = buildFooter();
+
+  // Load products from admin storage (live) or fallback to defaults
+  let LIVE_PRODUCTS = [];
+let LIVE_CATS = [];
+
+function filterProducts(cat, e) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (e && e.target) e.target.classList.add('active');
+  const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
+  document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
+  document.getElementById('count-label').textContent = Showing ${items.length} product${items.length!==1?'s':''};
+}
+
+function buildFiltersAndRender() {
+  const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
+  const filterBar = document.getElementById('filter-bar');
+  [...filterBar.querySelectorAll('[data-dynamic]')].forEach(b => b.remove());
+  usedCats.forEach(catId => {
+    const cat = LIVE_CATS.find(c => c.id === catId);
+    if (!cat) return;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.dynamic = '1';
+    btn.textContent = cat.name;
+    btn.onclick = (e) => filterProducts(catId, e);
+    filterBar.appendChild(btn);
+  });
+  filterProducts('', null);
+  document.querySelector('.filter-btn').classList.add('active');
+  document.getElementById('page-subtitle').textContent = Complete range of weighing machines — ${LIVE_PRODUCTS.length} products;
+}
+
+async function initProducts() {
+  try {
+    LIVE_PRODUCTS = await dbGetProducts();
+    LIVE_CATS = await dbGetCategories();
+  } catch(e) {
+    LIVE_PRODUCTS = getAdminProducts();
+    LIVE_CATS = getAdminCategories();
+  }
+  buildFiltersAndRender();
+}
+initProducts();
+</script>
+</body>
+</html>
