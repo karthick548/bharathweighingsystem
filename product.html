@@ -41,7 +41,8 @@
   document.getElementById('footer-root').innerHTML = buildFooter();
   const params = new URLSearchParams(window.location.search);
   const pid = params.get('id');
-  const p = getAdminProducts().find(x => x.id === pid);
+  getAdminProducts().then(function(allProds) {
+  const p = allProds.find(x => x.id === pid);
 
   if (!p) {
     document.getElementById('detail-root').innerHTML = `
@@ -53,7 +54,7 @@
   } else {
     document.title = p.name + ' — Bharath Weighing System';
 
-    const related = getAdminProducts().filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
+    const related = allProds.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
     const waMsg = encodeURIComponent(`Hello, I am interested in ${p.name} (${p.price}). Please provide more details.`);
     const specsHTML = p.specs.map(s => `<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
     const tagsHTML = p.tags.map(t => `<span style="background:#fff8e1;color:#7a5800;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;margin-right:6px;border:1px solid #f0d060">${t}</span>`).join('');
