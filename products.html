@@ -65,34 +65,47 @@
   document.getElementById('footer-root').innerHTML = buildFooter();
 
   // Load products from admin storage (live) or fallback to defaults
-  const LIVE_PRODUCTS = getAdminProducts();
-  const LIVE_CATS = getAdminCategories();
+  let LIVE_PRODUCTS = [];
+let LIVE_CATS = [];
 
-  // Build filter buttons dynamically from categories
+function filterProducts(cat, e) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (e && e.target) e.target.classList.add('active');
+  const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
+  document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
+  document.getElementById('count-label').textContent = Showing ${items.length} product${items.length!==1?'s':''};
+}
+
+function buildFiltersAndRender() {
   const usedCats = [...new Set(LIVE_PRODUCTS.map(p => p.cat))];
   const filterBar = document.getElementById('filter-bar');
+  [...filterBar.querySelectorAll('[data-dynamic]')].forEach(b => b.remove());
   usedCats.forEach(catId => {
     const cat = LIVE_CATS.find(c => c.id === catId);
     if (!cat) return;
     const btn = document.createElement('button');
     btn.className = 'filter-btn';
+    btn.dataset.dynamic = '1';
     btn.textContent = cat.name;
     btn.onclick = (e) => filterProducts(catId, e);
     filterBar.appendChild(btn);
   });
-
-  function filterProducts(cat, e) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    if (e && e.target) e.target.classList.add('active');
-    const items = cat ? LIVE_PRODUCTS.filter(p => p.cat === cat) : LIVE_PRODUCTS;
-    document.getElementById('all-grid').innerHTML = items.map(productCardHTML).join('');
-    document.getElementById('count-label').textContent = `Showing ${items.length} product${items.length!==1?'s':''}`;
-  }
-
-  // Initial render
   filterProducts('', null);
   document.querySelector('.filter-btn').classList.add('active');
-  document.getElementById('page-subtitle').textContent = `Complete range of weighing machines — ${LIVE_PRODUCTS.length} products`;
+  document.getElementById('page-subtitle').textContent = Complete range of weighing machines — ${LIVE_PRODUCTS.length} products;
+}
+
+async function initProducts() {
+  try {
+    LIVE_PRODUCTS = await dbGetProducts();
+    LIVE_CATS = await dbGetCategories();
+  } catch(e) {
+    LIVE_PRODUCTS = getAdminProducts();
+    LIVE_CATS = getAdminCategories();
+  }
+  buildFiltersAndRender();
+}
+initProducts();
 </script>
 </body>
 </html>
