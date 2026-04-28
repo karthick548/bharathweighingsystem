@@ -82,7 +82,7 @@ function buildHeader(activePage) {
       <a href="cat-platform.html" ${activePage==='crane'?'class="active"':''}>Platform Weighing Scales</a>
       <a href="cat-counting.html" ${activePage==='jewellery'?'class="active"':''}>Price counting Scales</a>
       <a href="cat-industrial.html" ${activePage==='industrial'?'class="active"':''}>Industrial Weighing Scale</a>
-      <a href="cat-retail.html" ${activePage==='retail'?'class="active"':''}>Billing Weighing Scales</a>
+      <a href="cat-retail.html" ${activePage==='retail'?'class="active"':''}>Billing Scales</a>
       <a href="about.html" ${activePage==='about'?'class="active"':''}>About</a>
       <a href="service.html" ${activePage==='service'?'class="active"':''}>Service</a>
       <a href="contact.html" ${activePage==='contact'?'class="active"':''}>Contact</a>
